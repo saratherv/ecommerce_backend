@@ -1,8 +1,10 @@
 from flask import render_template
 import connexion
+from flask_migrate import Migrate as FlaskMigrate
 from werkzeug.middleware.proxy_fix import ProxyFix
 from config import Config
 config_obj = Config.load()
+from core.database import database
 
 connexion_app = connexion.FlaskApp(__name__, specification_dir="./")
 connexion_app.app.config.from_object(config_obj)
@@ -12,6 +14,12 @@ connexion_app.app.wsgi_app = ProxyFix(connexion_app.app.wsgi_app, x_proto=1, x_h
 app = connexion_app.app
 app.url_map.strict_slashes = False
 
+db=database.initialize(
+    configuration=config_obj.DATABASE, application=connexion_app
+)
+
+# Set up migrations
+_ = FlaskMigrate(app, db, compare_type=True)
 
 @app.route("/")
 def home():
