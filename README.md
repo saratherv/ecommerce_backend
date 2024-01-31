@@ -1,3 +1,6 @@
+
+![alt text]([http://url/to/img.png](https://ibb.co/GtJ0MGq))
+
 # ecommerce_backend
 - This project is the backend Flask application for the ecommerce store.
 
