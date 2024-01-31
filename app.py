@@ -14,12 +14,25 @@ connexion_app.app.wsgi_app = ProxyFix(connexion_app.app.wsgi_app, x_proto=1, x_h
 app = connexion_app.app
 app.url_map.strict_slashes = False
 
+
+from api.v1 import (
+    api_endpoint as api_v1_endpoints
+)
+connexion_app.add_api(
+    specification=api_v1_endpoints.specification,
+    base_path=api_v1_endpoints.base_path,
+    resolver=api_v1_endpoints.resolver
+)
+
+
+
 db=database.initialize(
     configuration=config_obj.DATABASE, application=connexion_app
 )
 
 # Set up migrations
 _ = FlaskMigrate(app, db, compare_type=True)
+
 
 @app.route("/")
 def home():
