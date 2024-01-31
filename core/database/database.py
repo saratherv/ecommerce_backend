@@ -32,9 +32,9 @@ def initialize(configuration: dict, application: connexion.FlaskApp):
             pw = configuration.get("password"),
             host = configuration.get("host"),
             port = configuration.get("port", 3306),
-            database_name = configuration.get("dbname", "es_osm_db")
+            database_name = configuration.get("dbname", "ecommerce_db")
         )
-    elif configuration.get("engine") == DatabaseType.UNITTEST:
+    elif configuration.get("engine") == DatabaseType.CLOUD:
         application.app.config[
             "SQLALCHEMY_DATABASE_URI"
         ] = "mysql+pymysql://{user}:{pw}@{host}:{port}/{database_name}?charset=utf8mb4".format(
@@ -42,7 +42,7 @@ def initialize(configuration: dict, application: connexion.FlaskApp):
             pw = configuration.get("password"),
             host = configuration.get("host"),
             port = configuration.get("port", 3306),
-            database_name = configuration.get("dbname", "es_osm_db")
+            database_name = configuration.get("dbname", "ecommerce_db")
         )
 
     else: # Configuration not available yet eventhough valid type
