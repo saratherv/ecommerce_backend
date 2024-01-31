@@ -1,0 +1,22 @@
+openapi: "3.0.0"
+
+info: 
+  title: Ecommerce Backend API v1
+  description: "CRUD Handling"
+  version: "1.0"
+
+paths:
+    /items/:
+      get:
+        operationId: "api.v1.endpoints.items.ItemsView.get"
+        description: "Get all items filtered"
+
+        tags:
+          - "Items"
+        
+        responses:
+          "200":
+            description: Return list of items
+          
+          "400":
+            description: "Bad Request, Invalid input data"
