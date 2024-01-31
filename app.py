@@ -1,28 +1,16 @@
-from flask import render_template
+from flask import render_template, make_response, jsonify
 import connexion
 from flask_migrate import Migrate as FlaskMigrate
-from werkzeug.middleware.proxy_fix import ProxyFix
 from config import Config
 config_obj = Config.load()
 from core.database import database
+import pathlib
 
-connexion_app = connexion.FlaskApp(__name__, specification_dir="./")
-connexion_app.app.config.from_object(config_obj)
-# connexion_app.add_api("swagger.yml")
-connexion_app.app.wsgi_app = ProxyFix(connexion_app.app.wsgi_app, x_proto=1, x_host=1)
 
+basedir = pathlib.Path(__file__).parent.resolve()
+connexion_app = connexion.App(__name__, specification_dir=basedir)
+connexion_app.add_api(basedir / "api/v1/swagger.yml")
 app = connexion_app.app
-app.url_map.strict_slashes = False
-
-
-from api.v1 import (
-    api_endpoint as api_v1_endpoints
-)
-connexion_app.add_api(
-    specification=api_v1_endpoints.specification,
-    base_path=api_v1_endpoints.base_path,
-    resolver=api_v1_endpoints.resolver
-)
 
 
 
@@ -37,6 +25,23 @@ _ = FlaskMigrate(app, db, compare_type=True)
 @app.route("/")
 def home():
     return render_template("home.html")
+
+
+@app.errorhandler(404)
+def not_found(error):
+    
+    return make_response(jsonify({"error": "not found"}), 404)
+
+@app.errorhandler(500)
+def server_error(error):
+    
+    return make_response(jsonify({"error": "Internal Server Error"}), 500)
+
+@app.errorhandler(400)
+def bad_request(error):
+    
+    return make_response(jsonify({"error": "Bad Request"}), 400)
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=config_obj.LISTEN_PORT, debug=config_obj.DEBUG)
