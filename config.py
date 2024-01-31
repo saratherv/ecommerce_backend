@@ -44,7 +44,14 @@ class Config:
         return {
             "LISTEN_PORT" : 9000,
             "DEBUG" : True,
-            "DATABASE" : ""
+            "DATABASE" : {
+                "username": env("DB_USER"),
+                "password": env("DB_PASSWORD"),
+                "engine": env("DB_ENGINE", "LOCAL"),
+                "host": env("DB_HOST"),
+                "port": env.int("DB_PORT", 3306),
+                "dbname": env("DB_NAME", "es_osm_db")
+            },
         }
 
 
