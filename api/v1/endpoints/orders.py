@@ -15,7 +15,7 @@ class OrdersView(views.MethodView):
 
         #Discount calculkation Here
         discount_percent, discount_amount = 0, 0
-        all_orders = models.Orders.query.all()
+        all_orders = db.session.query(models.Orders.order_number.distinct()).all()
         if (len(all_orders) + 1)%2 == 0:
             discount_percent = 10
         response_object = {"user"  : {}, "items" : [], "Total" : 0}
