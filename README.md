@@ -35,5 +35,5 @@ This projecct is built in flask and can be started locally in python environment
    ```   
 ## Usage
 
-- Visit [[http://0.0.0.0:8080/docs](http://localhost:9000/api/v1/ui/#/)](http://localhost:9000/api/v1/ui/#/) to see swagger.
+- Visit [http://localhost:9000/api/v1/ui/#/](http://localhost:9000/api/v1/ui/#/) to see swagger.
 
