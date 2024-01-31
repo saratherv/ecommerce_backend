@@ -4,11 +4,30 @@ from sqlalchemy.sql import null
 from core.database import models
 from core.database.database import db
 import random
-
 class OrdersView(views.MethodView):
 
     def get() -> dict:
-        return {}
+        all_orders = db.session.query(models.Orders, models.Items, models.User)\
+            .join(models.Items, models.Orders.item_id==models.Items.id)\
+            .join(models.User, models.Orders.user_id==models.User.id)\
+            .all()
+        response_json = {}
+        total_sum, count = 0, 0
+        for order in all_orders:
+            order_detail,item, user = order[0], order[1], order[2]
+            total_sum += item.price
+            if order_detail.order_number in response_json:
+                response_json[order_detail.order_number]["items"].append(item.dict())
+                response_json[order_detail.order_number]["discount"].append({"item" : item.id, "amount" : order_detail.discount})
+            else:
+                response_json[order_detail.order_number] = {
+                    "items": [item.dict()], "user" : user.dict(), "discount" : [{"item": item.id, "amount": order_detail.discount}]}
+                count +=1
+        
+        response_json["Total Order Value"] = f"Rs {total_sum}"
+        response_json["Total Order Unit Count"] = count
+        return {"payload": {"result": response_json}, "status_code": 200}
+    
     
     def post() -> dict:
         request_body = flask.request.get_json()

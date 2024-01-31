@@ -30,7 +30,13 @@ class CartView(views.MethodView):
         )
         db.session.add(cart)
         db.session.commit()
-        return {"payload": {"result": cart.dict()}, "status_code": 201}
+        discount = False
+        discount_percent = 0
+        all_orders = db.session.query(models.Orders.order_number.distinct()).all()
+        if (len(all_orders) + 1)%2 == 0:
+            discount_percent = 10
+            discount = True
+        return {"payload": {"result": {"cart" : cart.dict()}, "discount" : f"You are eligible for {discount_percent}% discount"}, "status_code": 201}
 
 class CartDetailedView(views.MethodView):
 

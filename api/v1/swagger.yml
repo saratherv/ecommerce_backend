@@ -113,6 +113,20 @@ paths:
               description: "Bad Request: Invalid Input Data"
   
   /orders/:
+    get: #Orders
+        operationId: api.v1.endpoints.orders.OrdersView.get
+        description: "Get all orders"
+
+        tags:
+          - Orders
+
+        responses: 
+          "200": 
+            description: Returns list of order Config
+            # schema: 
+            #   type: string
+          "400": 
+            description: "Bad Request: Invalid Input Data"
     post:
       operationId: api.v1.endpoints.orders.OrdersView.post
       description: "Create order record in database"  
