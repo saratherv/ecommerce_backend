@@ -29,6 +29,9 @@ class User(db.Model, SerializerMixin):
     @staticmethod
     def dict_keys() -> tuple:
         return ("id", "name", "email", "created_at", "last_updated")
+    
+    def dict(self, columns: tuple = None):
+        return self.to_dict(only=columns if columns else self.dict_keys())
 
 
 class Items(db.Model, SerializerMixin):
@@ -38,9 +41,7 @@ class Items(db.Model, SerializerMixin):
 
     __tablename__ = "items"
 
-    id = db.Column(
-        db.String(32), primary_key=True, nullable=False, default=uuid4().hex
-    )
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     item_name = db.Column(db.String(256), unique=True, nullable=False)
     price = db.Column(db.Numeric(precision=10, scale=2), nullable=False)
     description = db.Column(db.String(1000))
@@ -57,6 +58,9 @@ class Items(db.Model, SerializerMixin):
     @staticmethod
     def dict_keys() -> tuple:
         return ("id", "item_name", "price", "description", "created_at", "last_updated")
+    
+    def dict(self, columns: tuple = None):
+        return self.to_dict(only=columns if columns else self.dict_keys())
 
 
 # class Discount(db.Model, SerializerMixin):
@@ -77,11 +81,9 @@ class Cart(db.Model, SerializerMixin):
 
     __tablename__ = "cart"
 
-    id = db.Column(
-        db.String(32), primary_key=True, nullable=False, default=uuid4().hex
-    )
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
-    item_id = db.Column(db.String(32), db.ForeignKey("items.id"))
+    item_id = db.Column(db.Integer, db.ForeignKey("items.id"))
     created_at = db.Column(db.DateTime, default=datetime.utcnow())
     last_updated = db.Column(db.DateTime, onupdate=datetime.utcnow())
 
@@ -98,6 +100,9 @@ class Cart(db.Model, SerializerMixin):
     @staticmethod
     def dict_keys() -> tuple:
         return ("id", "user_id", "item_id", "created_at", "last_updated")
+    
+    def dict(self, columns: tuple = None):
+        return self.to_dict(only=columns if columns else self.dict_keys())
 
 class Orders(db.Model, SerializerMixin):
     """
@@ -110,8 +115,9 @@ class Orders(db.Model, SerializerMixin):
     order_number = db.Column(
         db.String(32), nullable=False, default=uuid4().hex
     )
+    cart_id = db.Column(db.Integer, db.ForeignKey("cart.id"), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
-    item_id = db.Column(db.String(32), db.ForeignKey("items.id"))
+    item_id = db.Column(db.Integer, db.ForeignKey("items.id"))
     discount = db.Column(db.Numeric(precision=10, scale=2))
     created_at = db.Column(db.DateTime, default=datetime.utcnow())
     last_updated = db.Column(db.DateTime, onupdate=datetime.utcnow())
@@ -121,7 +127,8 @@ class Orders(db.Model, SerializerMixin):
     def join_criterion() -> dict:
         return {
             "User" : (User, User.id == Orders.user_id),
-            "Items" : (Items, Items.id == Orders.item_id)
+            "Items" : (Items, Items.id == Orders.item_id),
+            "Cart" : (Cart, Cart.id == Orders.cart_id)
         }
 
     def __repr__(self) -> str:
@@ -129,4 +136,7 @@ class Orders(db.Model, SerializerMixin):
 
     @staticmethod
     def dict_keys() -> tuple:
-        return ("id", "order_number", "user_id", "item_id", "discount", "created_at", "last_updated")
+        return ("id", "order_number", "cart_id", "user_id", "item_id", "discount", "created_at", "last_updated")
+    
+    def dict(self, columns: tuple = None):
+        return self.to_dict(only=columns if columns else self.dict_keys())

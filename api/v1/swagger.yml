@@ -8,17 +8,139 @@ servers:
   - url: "/api/v1"
 
 paths:
-  /items:
-    get:
-      operationId: "api.v1.endpoints.items.ItemsView.get"
-      description: "Get all items filtered"
+  /items/:
+    # get:
+    #   operationId: "api.v1.endpoints.items.ItemsView.get"
+    #   description: "Get all items filtered"
+
+    #   tags:
+    #     - "Items"
+        
+    #   responses:
+    #     "200":
+    #       description: Return list of items
+          
+    #     "400":
+    #       description: "Bad Request, Invalid input data"
+    
+    post:
+      operationId: api.v1.endpoints.items.ItemsView.post
+      description: "Create Item in database"
 
       tags:
         - "Items"
-        
+      
+      requestBody:
+        description: "Details of item to be created"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                item_name: 
+                  type: string
+                  nullable: false
+                price:
+                  type: number
+                  nullable: false
+                description:
+                    type: string 
+                    nullable: true 
+    
       responses:
-        "200":
-          description: Return list of items
-          
-        "400":
-          description: "Bad Request, Invalid input data"
+            "201":
+              description: Record Created
+            "400": 
+              description: "Bad Request: Invalid Input Data"
+
+  /users/:
+    post:
+      operationId: api.v1.endpoints.users.UsersView.post
+      description: "Create a user in database"
+
+      tags:
+        - "Users"
+      
+      requestBody:
+        description: "Details of user to be created"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: 
+                  type: string
+                  nullable: false
+                email:
+                  type: string
+                  nullable: false
+    
+      responses:
+            "201":
+              description: Record Created
+            "400": 
+              description: "Bad Request: Invalid Input Data"
+
+  /cart/:
+    post:
+      operationId: api.v1.endpoints.cart.CartView.post
+      description: "Create cart record in database"  
+
+      tags:
+        - "Cart"  
+      
+      requestBody:
+          description: "Details of cart to be created"
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  item_id: 
+                    type: integer
+                    nullable: false
+                  user_id:
+                    type: integer
+                    nullable: false
+      
+      responses:
+            "201":
+              description: Record Created
+            "400": 
+              description: "Bad Request: Invalid Input Data"
+  
+  /orders/:
+    post:
+      operationId: api.v1.endpoints.orders.OrdersView.post
+      description: "Create order record in database"  
+
+      tags:
+        - "Order"  
+      
+      requestBody:
+          description: "Details of order to be created"
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  item_id: 
+                    type: integer
+                    nullable: true
+                  user_id:
+                    type: integer
+                    nullable: true
+                  cart_id:
+                    type: integer
+                    nullable: true
+      
+      responses:
+            "201":
+              description: Record Created
+            "400": 
+              description: "Bad Request: Invalid Input Data"
+     
