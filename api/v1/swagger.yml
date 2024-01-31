@@ -157,4 +157,20 @@ paths:
               description: Record Created
             "400": 
               description: "Bad Request: Invalid Input Data"
+  
+  /discount/:
+    get: #Orders
+        operationId: api.v1.endpoints.discount.DiscountView.get
+        description: "Get all Discount"
+
+        tags:
+          - Discount
+
+        responses: 
+          "200": 
+            description: Returns list of Discount Config
+            # schema: 
+            #   type: string
+          "400": 
+            description: "Bad Request: Invalid Input Data"
      
